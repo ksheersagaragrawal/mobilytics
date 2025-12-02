@@ -13,6 +13,7 @@ from pathlib import Path
 from typing import Iterable
 
 import pandas as pd
+from sklearn. preprocessing import StandardScaler
 
 # Display full columns for quicker inspection when running as a script.
 pd.set_option("display.max_columns", None)
@@ -30,6 +31,15 @@ NUMERIC_COLUMNS = [
 	"Data Usage (MB/day)",
 	"Age",
 	"User Behavior Class",
+]
+
+RANDOM_STATE = 42
+FEATURE_COLS = [
+	"App Usage Time (min/day)",
+	"Screen On Time (hours/day)",
+	"Battery Drain (mAh/day)",
+	"Number of Apps Installed",
+	"Data Usage (MB/day)",
 ]
 
 
@@ -125,6 +135,56 @@ def run_preprocessing(input_path: Path = RAW_DATA_PATH, output_path: Path = CLEA
 	cleaned.to_csv(output_path, index=False)
 	print(f"Cleaned dataset saved to {output_path}")
 	return cleaned
+
+
+def read_dataset(path: Path | str = RAW_DATA_PATH) -> pd.DataFrame:
+	"""
+	Read dataset from CSV file for clustering analysis. 
+	
+	Args:
+		path: Path to the CSV file (defaults to cleaned dataset)
+		
+	Returns:
+		pd.DataFrame: Loaded dataframe
+	"""
+	if isinstance(path, str):
+		path = PROJECT_ROOT / path
+	
+	return load_dataset(path)
+
+
+def preprocess_data(df: pd.DataFrame, feature_cols: list[str] = FEATURE_COLS) -> tuple[pd.DataFrame, pd.DataFrame]:
+	"""
+	Extract features and create a copy for clustering. 
+	
+	Args:
+		df: Input dataframe
+		feature_cols: List of feature column names
+		
+	Returns:
+		tuple: (X features, df_clust copy)
+	"""
+	X = df[feature_cols]
+	df_clust = df.loc[X.index].copy()
+	
+	return X, df_clust
+
+
+def scale_features(X: pd.DataFrame) -> tuple[pd.DataFrame, StandardScaler]:
+	"""
+	Standardize features using StandardScaler. 
+	(x - mean) / standard_deviation to avoid outliers
+	
+	Args:
+		X: Feature matrix
+		
+	Returns:
+		tuple: (scaled features, fitted scaler)
+	"""
+	scaler = StandardScaler()
+	X_scaled = scaler.fit_transform(X)
+	
+	return X_scaled, scaler
 
 
 def _parse_args() -> tuple[Path, Path]:
