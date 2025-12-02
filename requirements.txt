@@ -3,3 +3,5 @@ numpy>=1.24,<3.0
 matplotlib>=3.5.0
 seaborn>=0.12.0
 scikit-learn>=1.2.0
+xgboost>=1.7.0
+shap>=0.41.0
