@@ -10,6 +10,10 @@ Install requirements
 
 pip install -r requirements.txt
 
+To run clustering code
+
+python3 clustering.py
+
 Deactivate once done
 
 deactivate
