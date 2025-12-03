@@ -23,11 +23,6 @@ mobilytics/
 3. Install dependencies:
 	- `pip install -r requirements.txt` 
 
-### Third-party modules
-
-- `pandas`: tabular data handling, CSV load/save, validation.
-- `numpy`: numerical helpers used by notebooks/analysis.
-
 ## Running the preprocessing pipeline
 
 The preprocessing logic lives in `src/data_preprocessing.py`. It (load → inspect → validate → clean) and writes a sanitized CSV for downstream analysis.
