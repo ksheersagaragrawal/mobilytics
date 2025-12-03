@@ -1,3 +1,5 @@
+#This file contains code for K Means clustering to identify the type of user based on certain features and identify clusters accordingly
+
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 from data_preprocessing import (read_dataset, preprocess_data, scale_features, RANDOM_STATE, FEATURE_COLS, PROJECT_ROOT)
