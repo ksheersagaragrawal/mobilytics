@@ -5,12 +5,10 @@ ECE 143 grp 16 project analysing mobile device usage patterns using the Gigashee
 
 ```
 mobilytics/
-├── data/                     # Raw and cleaned CSVs (not tracked in git)
-├── notebooks/                # Exploratory and presentation notebooks
+├── data/                     # Raw and cleaned CSVs and generated visuals for ML
+├── notebooks/                # Exploratory and visualization notebooks
 ├── presentation/             # Slide deck assets
 ├── src/                      # Project Python modules            
-├── tests/                    # Reserved for automated tests
-├── visuals/                  # Exported charts or dashboards
 └── README.md                 # Project overview and instructions
 ```
 
