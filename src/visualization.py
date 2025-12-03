@@ -1,3 +1,5 @@
+#This file is used to generate visualizations for example clustering and regression visualizations
+
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
