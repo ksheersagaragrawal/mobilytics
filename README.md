@@ -31,14 +31,18 @@ mobilytics/
     --output data/user_behavior_dataset_cleaned.csv
   ```
 
-- **Clustering pipeline (saves elbow + cluster plots to data/):**
+- **Clustering pipeline (saves elbow + cluster plots to data/visualization/):**
   ```
   python -m src.clustering
   ```
 
-- **Regression pipeline (Random Forest + XGBoost; saves feature plots to data/):**
+- **Regression pipeline (Random Forest + XGBoost; saves feature plots to data/visualization/):**
   ```
   python -m src.regression
+  ```
+- **visualizations pipeline (saves plots to data/visualization/):**
+  ```
+  python -m src.visualization
   ```
 
 - **Notebook:** open `notebooks/EDA_visualizations.ipynb` to view all visuals used in the presentation (older notebooks are kept in `notebooks/archive/` for reference).

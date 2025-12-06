@@ -177,5 +177,5 @@ if __name__ == "__main__":
     }
     
     # Generate and save all visualizations
-    output_dir = PROJECT_ROOT / 'data'
+    output_dir = PROJECT_ROOT / 'data'/ 'visualization'
     create_all_regression_visualizations(results, output_dir)

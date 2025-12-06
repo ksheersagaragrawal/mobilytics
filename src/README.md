@@ -3,7 +3,7 @@
 - `source venv/bin/activate`
 - `pip install -r ../requirements.txt`
 
-### Running modules from repo root
+### Running modules from repo root (requires changing import styles)
 - Preprocess data: `python data_preprocessing.py --input data/user_behavior_dataset.csv --output data/user_behavior_dataset_cleaned.csv`
 - Clustering visuals: `python clustering.py`
 - Regression visuals: `python regression.py`

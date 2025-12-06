@@ -11,7 +11,6 @@ from .data_preprocessing import (
     read_dataset,
     scale_features,
 )
-from .visualization import plot_clusters, plot_elbow_method
 
 def find_optimal_k(X_scaled, random_state=RANDOM_STATE):
     """
@@ -82,6 +81,9 @@ def main():
     """
     Main function to execute the complete clustering pipeline. 
     """
+    # Load import here to prevent circular import error
+    from .visualization import plot_clusters, plot_elbow_method
+
     # Step 1: Load data
     df = read_dataset()
     
@@ -93,7 +95,7 @@ def main():
     k_values, inertias = find_optimal_k(X_scaled)
     
     # Save elbow plot
-    elbow_plot_path = PROJECT_ROOT / 'data' / 'elbow_method.png'
+    elbow_plot_path = PROJECT_ROOT / 'data' / 'visualization'/ 'elbow_method.png'
     plot_elbow_method(k_values, inertias, save_path=elbow_plot_path)
     
     # Step 4: Perform clustering with best k
@@ -110,7 +112,7 @@ def main():
     df_clust["pca2"] = X_pca[:, 1]
     
     # Save cluster plot
-    cluster_plot_path = PROJECT_ROOT / 'data' / 'cluster_visualization.png'
+    cluster_plot_path = PROJECT_ROOT / 'data' / 'visualization'/ 'cluster_visualization.png'
     plot_clusters(df_clust, save_path=cluster_plot_path)
     
     return df_clust, km_model, pca_model, category_details
