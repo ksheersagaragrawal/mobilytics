@@ -1,18 +1,18 @@
-#This file has the code to implement random forests and xgboost for regression to understand feature importance for target columns
-
+# This file has the code to implement random forests and xgboost for regression to
+# understand feature importance for target columns.
 import numpy as np
 import pandas as pd
-from sklearn.model_selection import train_test_split
 from sklearn.compose import ColumnTransformer
-from sklearn.preprocessing import StandardScaler, OneHotEncoder
-from sklearn.pipeline import Pipeline
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_absolute_error, mean_squared_error
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from xgboost import XGBRegressor
 import shap
 
-from data_preprocessing import read_dataset, RANDOM_STATE, PROJECT_ROOT
-from visualization import create_all_regression_visualizations
+from .data_preprocessing import PROJECT_ROOT, RANDOM_STATE, read_dataset
+from .visualization import create_all_regression_visualizations
 
 def train_random_forest(df):
     """
@@ -27,7 +27,7 @@ def train_random_forest(df):
     categorical_features = ["Device Model", "Operating System", "Gender"]
 
     # Creating input and output (battery drain is what we need to predict, hence it is output)
-    X = df[numeric_features + categorical_features]. copy()
+    X = df[numeric_features + categorical_features].copy()
     y = df[target_col].copy()
 
     numeric_transformer = StandardScaler()
@@ -49,11 +49,11 @@ def train_random_forest(df):
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=RANDOM_STATE)
 
-    model. fit(X_train, y_train)
+    model.fit(X_train, y_train)
 
     y_pred = model.predict(X_test)
 
-    # Calculating metrics for regression (MAE and MSE are common metrics used) to see how the random forest has worked. 
+    # Calculating metrics for regression (MAE and MSE are common metrics used) to see how the random forest has worked.
     mae = mean_absolute_error(y_test, y_pred)
     rmse = mean_squared_error(y_test, y_pred)
 
@@ -70,11 +70,11 @@ def train_random_forest(df):
 
     feature_names = np.concatenate([numeric_features, one_hot_encoder])
 
-    # Getting the importance of each feature as compared to original output column (battery drain)
+    # Getting the importance of each feature as compared to original output column (battery drain).
     importance_of_each_feature = rf_model.feature_importances_
 
     # Converting the features to series so that we can plot it easily. 
-    feat_imp = pd.Series(importance_of_each_feature * 100, index=feature_names). sort_values(ascending=False)
+    feat_imp = pd.Series(importance_of_each_feature * 100, index=feature_names).sort_values(ascending=False)
 
     # Showing the same without a plot and as a table
     print(feat_imp.head(15))
@@ -86,7 +86,7 @@ def train_random_forest(df):
     X_sample_transformed = preprocessor.transform(X_sample)
 
     # Instantiating SHAP explainer class and getting values from it
-    explainer = shap. TreeExplainer(rf_model)
+    explainer = shap.TreeExplainer(rf_model)
     shap_values = explainer(X_sample_transformed)
 
     return model, feat_imp, shap_values, X_sample_transformed, feature_names
@@ -101,7 +101,7 @@ def train_xgboost(df):
     df_ml = df.copy()
 
     # One-hot encode any categorical columns
-    df_ml = pd. get_dummies(df_ml, drop_first=True)
+    df_ml = pd.get_dummies(df_ml, drop_first=True)
 
     X = df_ml.drop(columns=[target_col, 'User Behavior Class', "User ID"])
     y = df_ml[target_col]
@@ -123,7 +123,7 @@ def train_xgboost(df):
     xgb_model.fit(X_train, y_train)
     y_pred_xgb = xgb_model.predict(X_test)
     print("\n=== XGBoost Results ===")
-    rmse_xgb = np. sqrt(mean_squared_error(y_test, y_pred_xgb))
+    rmse_xgb = np.sqrt(mean_squared_error(y_test, y_pred_xgb))
     mae_xgb = mean_absolute_error(y_test, y_pred_xgb)
     print("RMSE:", rmse_xgb)
     print("MAE:", mae_xgb)
@@ -139,10 +139,10 @@ def train_xgboost(df):
     })
 
     # 3. Sort the DataFrame by importance scores in descending order
-    df_feature_importances_updated = df_feature_importances_updated. sort_values(by='Importance', ascending=False)
+    df_feature_importances_updated = df_feature_importances_updated.sort_values(by='Importance', ascending=False)
 
     print("Feature Importances from Updated XGBoost Model (Sorted):")
-    print(df_feature_importances_updated. head(10))
+    print(df_feature_importances_updated.head(10))
 
     return xgb_model, df_feature_importances_updated
 

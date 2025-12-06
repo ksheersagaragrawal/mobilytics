@@ -13,7 +13,7 @@ from pathlib import Path
 from typing import Iterable
 
 import pandas as pd
-from sklearn. preprocessing import StandardScaler
+from sklearn.preprocessing import StandardScaler
 
 # Display full columns for quicker inspection when running as a script.
 pd.set_option("display.max_columns", None)

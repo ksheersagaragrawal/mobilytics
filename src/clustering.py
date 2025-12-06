@@ -1,9 +1,17 @@
-#This file contains code for K Means clustering to identify the type of user based on certain features and identify clusters accordingly
-
+# This file contains code for K Means clustering to identify the type of user based on certain
+# features and identify clusters accordingly.
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
-from data_preprocessing import (read_dataset, preprocess_data, scale_features, RANDOM_STATE, FEATURE_COLS, PROJECT_ROOT)
-from visualization import (plot_elbow_method, plot_clusters)
+
+from .data_preprocessing import (
+    FEATURE_COLS,
+    PROJECT_ROOT,
+    RANDOM_STATE,
+    preprocess_data,
+    read_dataset,
+    scale_features,
+)
+from .visualization import plot_clusters, plot_elbow_method
 
 def find_optimal_k(X_scaled, random_state=RANDOM_STATE):
     """
@@ -16,7 +24,7 @@ def find_optimal_k(X_scaled, random_state=RANDOM_STATE):
     for k in k_values:
         km = KMeans(n_clusters=k, random_state=random_state, n_init="auto")
         km.fit(X_scaled)
-        inertias. append(km.inertia_)
+        inertias.append(km.inertia_)
     
     return k_values, inertias
 
@@ -26,7 +34,7 @@ def perform_clustering(X_scaled, n_clusters, random_state=RANDOM_STATE):
     """
 
     km = KMeans(n_clusters=n_clusters, random_state=random_state, n_init="auto")
-    y = km. fit_predict(X_scaled)
+    y = km.fit_predict(X_scaled)
     
     return y, km
 
@@ -51,12 +59,12 @@ def assign_user_types(df_clust, feature_cols=FEATURE_COLS, sort_column="Screen O
     
     # Map category IDs to user type labels
     category_to_label = {
-        category_id: label 
+        category_id: label
         for category_id, label in zip(sorted_categories, user_type_labels)
     }
     
     # Assign user type labels
-    df_clust["Type of User"] = df_clust["category"]. map(category_to_label)
+    df_clust["Type of User"] = df_clust["category"].map(category_to_label)
     
     return df_clust, category_details, category_to_label
 

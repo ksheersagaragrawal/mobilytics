@@ -1,12 +1,14 @@
-#This file is used to generate visualizations for example clustering and regression visualizations
+# This file is used to generate visualizations for clustering and regression.
+from pathlib import Path
 
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import seaborn as sns
-from data_preprocessing import read_dataset, preprocess_data, scale_features, FEATURE_COLS, PROJECT_ROOT
-from pathlib import Path
 import shap
+
+from .data_preprocessing import FEATURE_COLS, PROJECT_ROOT, preprocess_data, read_dataset, scale_features
+from .clustering import apply_pca, assign_user_types, find_optimal_k, perform_clustering
 
 def plot_elbow_method(k_values, inertias, save_path=None):
     """
@@ -15,7 +17,7 @@ def plot_elbow_method(k_values, inertias, save_path=None):
 
     plt.figure(figsize=(10, 10))
     plt.plot(k_values, inertias, marker='o')
-    plt. xlabel("K (The number of clusters)")
+    plt.xlabel("K (The number of clusters)")
     plt.ylabel("Inertia (Within cluster sum of squares)")
     plt.title("Elbow Method for Optimal K")
     plt.grid(True, alpha=0.3)
@@ -33,22 +35,24 @@ def plot_clusters(df_clust, save_path=None):
     """
 
     plt.figure(figsize=(10,10))
-    sns.scatterplot(data=df_clust,
+    sns.scatterplot(
+        data=df_clust,
         x="pca1",
         y="pca2",
-        hue="Type of User")
+        hue="Type of User",
+    )
     
     plt.title("User Behavior Categories/Clusters")
     plt.xlabel("PCA1")
     plt.ylabel("PCA2 ")
     plt.legend()
-    plt. grid(True, alpha=0.3)
+    plt.grid(True, alpha=0.3)
     plt.tight_layout()
     
     if save_path:
         plt.savefig(save_path, dpi=300, bbox_inches='tight')
     
-    plt. close()
+    plt.close()
 
 def plot_feature_distributions(df_clust, feature_cols, save_path=None):
     """
@@ -132,7 +136,7 @@ def plot_shap_summary(shap_values, X_sample_transformed, feature_names, save_pat
     plt.tight_layout()
     
     if save_path:
-        plt. savefig(save_path, dpi=300, bbox_inches='tight')
+        plt.savefig(save_path, dpi=300, bbox_inches='tight')
     
     plt.close()
 
@@ -157,8 +161,8 @@ def plot_xgb_feature_importance(feature_importance_df, top_n=10, save_path=None)
     plt.title('Top 10 Feature Importances XGBoost Model for Data Usage', fontsize=16)
     plt.xlabel('Feature', fontsize=12)
     plt.ylabel('Importance Score', fontsize=12)
-    plt. xticks(rotation=45, ha='right')
-    plt. tight_layout()
+    plt.xticks(rotation=45, ha='right')
+    plt.tight_layout()
     
     if save_path:
         plt.savefig(save_path, dpi=300, bbox_inches='tight')
