@@ -26,23 +26,23 @@ mobilytics/
 
 - **Preprocess the dataset (clean CSV):**
   ```
-  python -m src.data_preprocessing \
+  python3 -m src.data_preprocessing \
     --input data/user_behavior_dataset.csv \
     --output data/user_behavior_dataset_cleaned.csv
   ```
 
 - **Clustering pipeline (saves elbow + cluster plots to data/visualization/):**
   ```
-  python -m src.clustering
+  python3 -m src.clustering
   ```
 
 - **Regression pipeline (Random Forest + XGBoost; saves feature plots to data/visualization/):**
   ```
-  python -m src.regression
+  python3 -m src.regression
   ```
 - **visualizations pipeline (saves plots to data/visualization/):**
   ```
-  python -m src.visualization
+  python3 -m src.visualization
   ```
 
 - **Notebook:** open `notebooks/EDA_visualizations.ipynb` to view all visuals used in the presentation (older notebooks are kept in `notebooks/archive/` for reference).
