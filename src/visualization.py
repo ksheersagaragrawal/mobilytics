@@ -7,6 +7,7 @@ import seaborn as sns
 from src.data_preprocessing import read_dataset, preprocess_data, scale_features, FEATURE_COLS, PROJECT_ROOT
 from pathlib import Path
 import shap
+import numpy as np
 from src.clustering import find_optimal_k, perform_clustering, assign_user_types, apply_pca
 
 def plot_elbow_method(k_values, inertias, save_path=None):
@@ -90,6 +91,13 @@ def create_all_visualizations(df_clust, k_values, inertias, feature_cols, output
 
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
+
+    plot_eda_demographic_and_device_distributions(df_clust, output_dir)
+
+    screen_time_overview_path = output_dir / "screen_time_by_age_gender_os.png"
+    plot_eda_screen_time_overview(df_clust, save_path=screen_time_overview_path)
+
+    plot_eda_device_usage_visualizations(df_clust, output_dir)
     
     elbow_path = output_dir / 'elbow_method.png'
     plot_elbow_method(k_values, inertias, save_path=elbow_path)
@@ -115,6 +123,122 @@ def create_all_visualizations(df_clust, k_values, inertias, feature_cols, output
     correlation_heatmap_path = output_dir / 'eda_correlation_heatmap.png'
     plot_eda_correlation_heatmap(df_clust,correlation_heatmap_path)
 
+
+def plot_eda_demographic_and_device_distributions(device_usage, output_dir):
+    """
+    Generate demographic and device/OS distribution visuals.
+    """
+    configs = [
+        ("age_distribution.png", lambda: sns.histplot(device_usage["Age"], kde=True, color="steelblue")),
+        ("gender_distribution.png", lambda: sns.countplot(x="Gender", data=device_usage, palette="Set2")),
+        ("device_model_frequency.png", lambda: sns.countplot(
+            x="Device Model",
+            data=device_usage,
+            order=device_usage["Device Model"].value_counts().index,
+            palette="viridis",
+        )),
+        ("os_distribution.png", lambda: sns.countplot(x="Operating System", data=device_usage, palette="coolwarm")),
+    ]
+
+    for filename, plot_fn in configs:
+        plt.figure()
+        plot_fn()
+        plt.tight_layout()
+        plt.savefig(output_dir / filename, dpi=300, bbox_inches="tight")
+        plt.close()
+
+
+def plot_eda_screen_time_overview(device_usage, save_path):
+    """
+    Plot screen time vs age, gender, and OS as subplots in a single figure.
+    """
+    fig, axes = plt.subplots(1, 3, figsize=(18, 5))
+
+    sns.scatterplot(
+        x="Age",
+        y="Screen On Time (hours/day)",
+        data=device_usage,
+        hue="Gender",
+        palette="Set1",
+        alpha=0.7,
+        ax=axes[0],
+    )
+    sns.regplot(
+        x="Age",
+        y="Screen On Time (hours/day)",
+        data=device_usage,
+        scatter=False,
+        color="black",
+        ax=axes[0],
+    )
+    axes[0].set_title("Age vs Screen On Time")
+    axes[0].set_xlabel("Age")
+    axes[0].set_ylabel("Screen On Time (hours/day)")
+
+    sns.boxplot(
+        x="Gender",
+        y="Screen On Time (hours/day)",
+        data=device_usage,
+        palette="Set3",
+        ax=axes[1],
+    )
+    axes[1].set_title("Screen On Time by Gender")
+    axes[1].set_xlabel("Gender")
+    axes[1].set_ylabel("Screen On Time (hours/day)")
+
+    sns.boxplot(
+        x="Operating System",
+        y="Screen On Time (hours/day)",
+        data=device_usage,
+        palette="Set2",
+        ax=axes[2],
+    )
+    axes[2].set_title("Screen On Time by Operating System")
+    axes[2].set_xlabel("Operating System")
+    axes[2].set_ylabel("Screen On Time (hours/day)")
+
+    plt.tight_layout()
+    plt.savefig(save_path, dpi=300, bbox_inches="tight")
+    plt.close()
+
+
+def plot_eda_device_usage_visualizations(device_usage, output_dir):
+    """
+    Generate device usage visuals (battery/data by device model).
+    """
+    # Battery drain by device model
+    plt.figure(figsize=(10, 5))
+    sns.barplot(
+        x="Device Model",
+        y="Battery Drain (mAh/day)",
+        data=device_usage,
+        estimator=np.mean,
+        palette="magma",
+    )
+    plt.title("Average Battery Drain by Device Model")
+    plt.xlabel("Device Model")
+    plt.ylabel("Battery Drain (mAh/day)")
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    plt.savefig(output_dir / "battery_drain_by_device_model.png", dpi=300, bbox_inches="tight")
+    plt.close()
+
+    # Data usage by device model
+    plt.figure(figsize=(10, 5))
+    sns.barplot(
+        x="Device Model",
+        y="Data Usage (MB/day)",
+        data=device_usage,
+        estimator=np.mean,
+        palette="plasma",
+    )
+    plt.title("Average Data Usage by Device Model")
+    plt.xlabel("Device Model")
+    plt.ylabel("Data Usage (MB/day)")
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    plt.savefig(output_dir / "data_usage_by_device_model.png", dpi=300, bbox_inches="tight")
+    plt.close()
 
 
 def plot_rf_feature_importance(feat_imp, top_n=15, save_path=None):
@@ -403,7 +527,7 @@ def plot_eda_correlation_heatmap(device_usage, save_path):
     plt.figure(figsize=(12, 8))
     sns.heatmap(corr, annot=True, cmap="coolwarm")
     if save_path:
-        plt.savefig("correlation_heatmap.png", dpi=300, bbox_inches='tight')
+        plt.savefig(save_path, dpi=300, bbox_inches='tight')
     plt.close()
 
 
