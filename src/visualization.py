@@ -112,6 +112,11 @@ def create_all_visualizations(df_clust, k_values, inertias, feature_cols, output
     user_categories_path = output_dir / 'eda_user_categories.png'
     plot_eda_user_categories(df_clust,user_categories_path)
 
+    correlation_heatmap_path = output_dir / 'eda_correlation_heatmap.png'
+    plot_eda_correlation_heatmap(df_clust,correlation_heatmap_path)
+
+
+
 def plot_rf_feature_importance(feat_imp, top_n=15, save_path=None):
     """
     Plot Random Forest feature importance bar plot.
@@ -371,6 +376,36 @@ def plot_eda_user_categories(device_usage, save_path):
         plt.savefig(save_path, dpi=300, bbox_inches='tight')
     
     plt.close()
+
+def plot_eda_correlation_heatmap(device_usage, save_path):
+    """
+    Plot a heatmap of the correlation between numeric columns.
+
+    Parameters:
+    device_usage (pd.DataFrame): The dataframe containing the numeric columns.
+    save_path (str): The path to save the plot.
+
+    Returns:
+    None
+    """
+    NUMERIC_COLUMNS = [
+	"App Usage Time (min/day)",
+	"Screen On Time (hours/day)",
+	"Battery Drain (mAh/day)",
+	"Number of Apps Installed",
+	"Data Usage (MB/day)",
+	"Age",
+	"User Behavior Class",
+    ]
+
+    num_df = device_usage[NUMERIC_COLUMNS]
+    corr = num_df.corr()
+    plt.figure(figsize=(12, 8))
+    sns.heatmap(corr, annot=True, cmap="coolwarm")
+    if save_path:
+        plt.savefig("correlation_heatmap.png", dpi=300, bbox_inches='tight')
+    plt.close()
+
 
 if __name__ == "__main__":
     """
